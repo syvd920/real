@@ -9,39 +9,11 @@ const LAWD_CODES = {
   "용산구":"11170", "은평구":"11380", "종로구":"11110", "중구":"11140", "중랑구":"11260"
 };
 
-// API 낭비 방지용 사전 리스트입니다. 필요한 단지는 여기에 계속 추가하면 됩니다.
-const APT_LIST = {
-  "강남구": ["은마", "래미안대치팰리스", "도곡렉슬", "타워팰리스", "개포래미안포레스트", "디에이치아너힐즈", "래미안블레스티지", "압구정현대", "개포자이프레지던스"],
-  "강동구": ["고덕그라시움", "고덕아르테온", "고덕자이", "래미안힐스테이트고덕", "고덕센트럴아이파크", "둔촌주공", "올림픽파크포레온"],
-  "강북구": ["SK북한산시티", "래미안트리베라", "꿈의숲롯데캐슬", "수유벽산", "미아동부센트레빌"],
-  "강서구": ["마곡엠밸리", "우장산힐스테이트", "강서힐스테이트", "염창동아", "등촌주공"],
-  "관악구": ["e편한세상서울대입구", "관악드림타운", "봉천두산", "벽산블루밍", "관악푸르지오"],
-  "광진구": ["광장현대", "구의현대", "자양우성", "자양한강극동", "래미안프리미어팰리스"],
-  "구로구": ["신도림동아", "신도림대림", "구로두산", "개봉한마을", "고척벽산베스트블루밍"],
-  "금천구": ["롯데캐슬골드파크", "금천현대", "벽산타운", "남서울힐스테이트", "관악산벽산타운"],
-  "노원구": ["상계주공", "중계그린", "중계청구", "월계시영", "하계장미"],
-  "도봉구": ["창동주공", "북한산아이파크", "도봉한신", "쌍문한양", "방학신동아"],
-  "동대문구": ["래미안크레시티", "청량리역롯데캐슬SKY-L65", "전농SK", "답십리래미안위브", "휘경SK뷰"],
-  "동작구": ["아크로리버하임", "흑석한강센트레빌", "상도래미안", "사당우성", "이수힐스테이트"],
-  "마포구": ["마포래미안푸르지오", "공덕삼성", "상암월드컵파크", "마포자이", "래미안마포리버웰"],
-  "서대문구": ["DMC파크뷰자이", "홍제센트럴아이파크", "북아현두산", "e편한세상신촌", "홍은벽산"],
-  "서초구": ["아크로리버파크", "래미안원베일리", "반포자이", "래미안퍼스티지", "서초그랑자이", "방배그랑자이", "신반포자이"],
-  "성동구": ["서울숲리버뷰자이", "왕십리텐즈힐", "옥수파크힐스", "금호자이", "트리마제"],
-  "성북구": ["길음뉴타운", "래미안길음센터피스", "돈암한신한진", "종암SK", "월곡두산위브"],
-  "송파구": ["헬리오시티", "잠실엘스", "리센츠", "트리지움", "파크리오", "올림픽선수기자촌", "잠실주공5단지"],
-  "양천구": ["목동신시가지", "목동힐스테이트", "신정이펜하우스", "목동센트럴아이파크위브", "신월시영"],
-  "영등포구": ["여의도시범", "당산삼성래미안", "문래자이", "영등포푸르지오", "신길센트럴자이"],
-  "용산구": ["한가람", "한강맨션", "이촌코오롱", "래미안첼리투스", "용산센트럴파크해링턴스퀘어"],
-  "은평구": ["은평뉴타운", "녹번역e편한세상캐슬", "백련산힐스테이트", "DMC롯데캐슬더퍼스트", "불광롯데캐슬"],
-  "종로구": ["경희궁자이", "창신쌍용", "무악현대", "인왕산아이파크", "종로센트레빌"],
-  "중구": ["서울역센트럴자이", "남산타운", "청구e편한세상", "신당푸르지오", "롯데캐슬베네치아"],
-  "중랑구": ["사가정센트럴아이파크", "신내데시앙", "면목두산", "중화한신", "상봉프레미어스엠코"]
-};
-
 const $ = (id) => document.getElementById(id);
 let selectedRegion = "강남구";
 let selectedApt = "";
 let lastRows = [];
+let requestSeq = 0;
 
 function ymList(start, end){
   const arr = [];
@@ -76,14 +48,22 @@ function normalizeItem(item){
     buildYear: item.buildYear || item.건축년도 || ''
   };
 }
+function resetResult(message){
+  $('tbody').innerHTML = '';
+  $('summary').classList.add('hidden');
+  $('csvBtn').disabled = true;
+  $('resultTitle').textContent = '검색 결과';
+  $('status').textContent = message;
+}
 function render(rows){
   lastRows = rows.sort((a,b)=> b.date.localeCompare(a.date));
   $('tbody').innerHTML = lastRows.map(r => `<tr><td>${r.date}</td><td>${selectedRegion} ${r.dong}</td><td>${r.apt}</td><td>${r.area}</td><td>${r.floor}</td><td class="amount">${formatEok(r.amount)}</td><td>${r.buildYear}</td></tr>`).join('');
   $('csvBtn').disabled = !lastRows.length;
   if (!lastRows.length) { $('summary').classList.add('hidden'); return; }
   const prices = lastRows.map(r=>moneyToNum(r.amount)).filter(Boolean);
-  const avg = Math.round(prices.reduce((a,b)=>a+b,0)/prices.length);
-  const max = Math.max(...prices), min = Math.min(...prices);
+  const avg = prices.length ? Math.round(prices.reduce((a,b)=>a+b,0)/prices.length) : 0;
+  const max = prices.length ? Math.max(...prices) : 0;
+  const min = prices.length ? Math.min(...prices) : 0;
   $('summary').innerHTML = `
     <div class="box"><span>거래 건수</span><b>${lastRows.length.toLocaleString()}건</b></div>
     <div class="box"><span>평균 거래가</span><b>${formatEok(avg)}</b></div>
@@ -101,24 +81,26 @@ function renderRegions(){
       selectedApt = "";
       $('aptFilter').value = "";
       $('selectedRegionText').textContent = `${selectedRegion} 선택됨`;
-      $('resultTitle').textContent = '검색 결과';
-      $('status').textContent = `${selectedRegion}에서 아파트를 선택해 주세요.`;
-      $('tbody').innerHTML = '';
-      $('summary').classList.add('hidden');
-      $('csvBtn').disabled = true;
+      resetResult(`${selectedRegion} 아파트 리스트에서 단지를 선택해 주세요.`);
       renderRegions();
       renderAptList();
+      $('aptPanel').classList.remove('hidden');
     });
   });
 }
 function renderAptList(){
   const keyword = $('aptFilter').value.trim().toLowerCase();
-  const list = (APT_LIST[selectedRegion] || []).filter(name => name.toLowerCase().includes(keyword));
+  const source = APT_LIST[selectedRegion] || [];
+  const list = source.filter(name => name.toLowerCase().includes(keyword));
   $('aptCountText').textContent = `${list.length.toLocaleString()}개 단지`;
+  if (!list.length) {
+    $('aptList').innerHTML = `<div class="empty">등록된 단지가 없습니다. apt-list.js에 단지를 추가해 주세요.</div>`;
+    return;
+  }
   $('aptList').innerHTML = list.map(name =>
-    `<button class="apt-chip ${name === selectedApt ? 'active' : ''}" data-apt="${name}">${name}</button>`
+    `<button class="apt-row ${name === selectedApt ? 'active' : ''}" data-apt="${name}"><span class="name">${name}</span><span class="go">실거래 조회</span></button>`
   ).join('');
-  document.querySelectorAll('.apt-chip').forEach(btn => {
+  document.querySelectorAll('.apt-row').forEach(btn => {
     btn.addEventListener('click', () => {
       selectedApt = btn.dataset.apt;
       renderAptList();
@@ -127,6 +109,7 @@ function renderAptList(){
   });
 }
 async function searchSelectedApt(){
+  const seq = ++requestSeq;
   const lawCd = LAWD_CODES[selectedRegion];
   if (!lawCd || !selectedApt) return;
   if (!$('startMonth').value || !$('endMonth').value) return alert('기간을 선택해 주세요.');
@@ -147,7 +130,9 @@ async function searchSelectedApt(){
       const items = Array.isArray(json.items) ? json.items : [];
       all.push(...items.map(normalizeItem));
     }
-    const filtered = all.filter(r => r.apt && r.apt.toLowerCase().includes(selectedApt.toLowerCase()));
+    if (seq !== requestSeq) return;
+    const target = selectedApt.toLowerCase().replaceAll(' ', '');
+    const filtered = all.filter(r => (r.apt || '').toLowerCase().replaceAll(' ', '').includes(target));
     $('resultTitle').textContent = `${selectedRegion} ${selectedApt}`;
     $('status').textContent = filtered.length ? `${filtered.length.toLocaleString()}건 조회되었습니다.` : '선택한 기간에 거래가 없습니다.';
     render(filtered);
@@ -170,3 +155,4 @@ $('csvBtn').addEventListener('click', downloadCSV);
 setDefaultMonths();
 renderRegions();
 renderAptList();
+resetResult(`${selectedRegion} 아파트 리스트에서 단지를 선택해 주세요.`);

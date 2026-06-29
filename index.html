@@ -11,7 +11,7 @@
     <section class="hero">
       <div class="badge">국토교통부 실거래가 API 기반</div>
       <h1>서울 아파트 실거래가 검색</h1>
-      <p>구를 선택하고 아파트를 클릭하면 그때만 실거래가를 조회합니다.</p>
+      <p>25개 구를 클릭하고, 펼쳐지는 아파트 리스트에서 단지를 선택하세요.</p>
     </section>
 
     <section class="card search-card">
@@ -32,14 +32,16 @@
       </div>
       <div id="regionButtons" class="region-buttons"></div>
 
-      <div class="section-title apt-title">
-        <h2>2. 아파트 선택</h2>
-        <span id="aptCountText">아파트 리스트</span>
+      <div id="aptPanel" class="apt-panel open">
+        <div class="section-title apt-title">
+          <h2>2. 아파트 선택</h2>
+          <span id="aptCountText">아파트 리스트</span>
+        </div>
+        <input id="aptFilter" class="apt-filter" placeholder="아파트명 빠른 검색" />
+        <div id="aptList" class="apt-list vertical"></div>
       </div>
-      <input id="aptFilter" class="apt-filter" placeholder="아파트명 빠른 검색" />
-      <div id="aptList" class="apt-list"></div>
 
-      <p class="help">※ 아파트 리스트 클릭 전에는 API를 호출하지 않습니다. 리스트는 <code>app.js</code>의 <code>APT_LIST</code>에서 추가·수정할 수 있습니다.</p>
+      <p class="help">※ 구 클릭 시 아파트 리스트만 펼쳐지고, 실제 API 조회는 아파트를 클릭했을 때만 실행됩니다.</p>
     </section>
 
     <section id="summary" class="summary hidden"></section>
@@ -68,6 +70,7 @@
       </div>
     </section>
   </main>
+  <script src="apt-list.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
