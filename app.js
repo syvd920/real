@@ -1,5 +1,5 @@
 // Cloudflare Worker 배포 후 주소로 교체하세요.
-const API_BASE = "https://apt-realprice-api.s-hg1.workers.dev/";
+const API_BASE = "https://apt-realprice-api.s-hg1.workers.dev";
 
 const LAWD_CODES = {
   "강남구":"11680", "강동구":"11740", "강북구":"11305", "강서구":"11500", "관악구":"11620",
