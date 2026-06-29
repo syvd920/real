@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>아파트 실거래가 검색</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <div class="badge">국토교통부 실거래가 API 기반</div>
+      <h1>아파트 실거래가 검색</h1>
+      <p>예: <b>강남구 래미안대치팰리스</b>, <b>서초구 아크로리버파크</b></p>
+    </section>
+
+    <section class="card search-card">
+      <div class="grid">
+        <label>
+          지역
+          <input id="regionInput" placeholder="예: 강남구" value="강남구" />
+        </label>
+        <label>
+          아파트명
+          <input id="aptInput" placeholder="예: 은마, 래미안대치팰리스" />
+        </label>
+        <label>
+          시작월
+          <input id="startMonth" type="month" />
+        </label>
+        <label>
+          종료월
+          <input id="endMonth" type="month" />
+        </label>
+      </div>
+      <button id="searchBtn">실거래가 검색</button>
+      <p class="help">※ 지역은 서울 주요 구 코드가 기본 내장되어 있습니다. 다른 지역은 <code>app.js</code>의 법정동코드를 추가하면 됩니다.</p>
+    </section>
+
+    <section id="summary" class="summary hidden"></section>
+
+    <section class="card result-card">
+      <div class="result-head">
+        <h2>검색 결과</h2>
+        <button id="csvBtn" class="ghost" disabled>CSV 다운로드</button>
+      </div>
+      <div id="status" class="status">검색 조건을 입력해 주세요.</div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>계약일</th>
+              <th>구/동</th>
+              <th>아파트</th>
+              <th>전용㎡</th>
+              <th>층</th>
+              <th>금액</th>
+              <th>건축년도</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
