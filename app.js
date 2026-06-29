@@ -63,7 +63,7 @@ function render(rows){
 async function search(){
   const region = $('regionInput').value.trim();
   const aptKeyword = $('aptInput').value.trim().toLowerCase();
-  const lawdCd = LAWD_CODES[region];
+  const lawCd = LAWD_CODES[region];
   if (!lawdCd) return alert('현재는 서울 구 이름 기준입니다. app.js에 법정동코드를 추가해 주세요.');
   if (!$('startMonth').value || !$('endMonth').value) return alert('기간을 선택해 주세요.');
   $('searchBtn').disabled = true; $('status').textContent = '조회 중입니다...'; $('tbody').innerHTML = '';
@@ -71,7 +71,7 @@ async function search(){
     const months = ymList($('startMonth').value, $('endMonth').value);
     const all = [];
     for (const ym of months) {
-      const url = `${API_BASE}/apt-trade?lawdCd=${lawdCd}&dealYmd=${ym}`;
+      const url = `${API_BASE}/apt-trade?lawCd=${lawCd}&dealYmd=${ym}`;
       const res = await fetch(url);
       if(!res.ok) throw new Error(await res.text());
       const json = await res.json();
