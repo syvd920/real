@@ -3,27 +3,19 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>아파트 실거래가 검색</title>
+  <title>서울 아파트 실거래가 검색</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <main class="wrap">
     <section class="hero">
       <div class="badge">국토교통부 실거래가 API 기반</div>
-      <h1>아파트 실거래가 검색</h1>
-      <p>예: <b>강남구 래미안대치팰리스</b>, <b>서초구 아크로리버파크</b></p>
+      <h1>서울 아파트 실거래가 검색</h1>
+      <p>구를 선택하고 아파트를 클릭하면 그때만 실거래가를 조회합니다.</p>
     </section>
 
     <section class="card search-card">
-      <div class="grid">
-        <label>
-          지역
-          <input id="regionInput" placeholder="예: 강남구" value="강남구" />
-        </label>
-        <label>
-          아파트명
-          <input id="aptInput" placeholder="예: 은마, 래미안대치팰리스" />
-        </label>
+      <div class="top-row">
         <label>
           시작월
           <input id="startMonth" type="month" />
@@ -33,18 +25,31 @@
           <input id="endMonth" type="month" />
         </label>
       </div>
-      <button id="searchBtn">실거래가 검색</button>
-      <p class="help">※ 지역은 서울 주요 구 코드가 기본 내장되어 있습니다. 다른 지역은 <code>app.js</code>의 법정동코드를 추가하면 됩니다.</p>
+
+      <div class="section-title">
+        <h2>1. 구 선택</h2>
+        <span id="selectedRegionText">강남구 선택됨</span>
+      </div>
+      <div id="regionButtons" class="region-buttons"></div>
+
+      <div class="section-title apt-title">
+        <h2>2. 아파트 선택</h2>
+        <span id="aptCountText">아파트 리스트</span>
+      </div>
+      <input id="aptFilter" class="apt-filter" placeholder="아파트명 빠른 검색" />
+      <div id="aptList" class="apt-list"></div>
+
+      <p class="help">※ 아파트 리스트 클릭 전에는 API를 호출하지 않습니다. 리스트는 <code>app.js</code>의 <code>APT_LIST</code>에서 추가·수정할 수 있습니다.</p>
     </section>
 
     <section id="summary" class="summary hidden"></section>
 
     <section class="card result-card">
       <div class="result-head">
-        <h2>검색 결과</h2>
+        <h2 id="resultTitle">검색 결과</h2>
         <button id="csvBtn" class="ghost" disabled>CSV 다운로드</button>
       </div>
-      <div id="status" class="status">검색 조건을 입력해 주세요.</div>
+      <div id="status" class="status">구와 아파트를 선택해 주세요.</div>
       <div class="table-wrap">
         <table>
           <thead>
