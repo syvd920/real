@@ -11,19 +11,13 @@
     <section class="hero">
       <div class="badge">국토교통부 실거래가 API 기반</div>
       <h1>서울 아파트 실거래가 검색</h1>
-      <p>25개 구를 클릭하고, 펼쳐지는 아파트 리스트에서 단지를 선택하세요.</p>
+      <p>25개 구를 선택하고, 리스트에서 클릭하거나 등록되지 않은 단지도 직접 검색하세요.</p>
     </section>
 
     <section class="card search-card">
       <div class="top-row">
-        <label>
-          시작월
-          <input id="startMonth" type="month" />
-        </label>
-        <label>
-          종료월
-          <input id="endMonth" type="month" />
-        </label>
+        <label>시작월<input id="startMonth" type="month" /></label>
+        <label>종료월<input id="endMonth" type="month" /></label>
       </div>
 
       <div class="section-title">
@@ -37,11 +31,18 @@
           <h2>2. 아파트 선택</h2>
           <span id="aptCountText">아파트 리스트</span>
         </div>
-        <input id="aptFilter" class="apt-filter" placeholder="아파트명 빠른 검색" />
+
+        <div class="apt-search-bar">
+          <input id="aptFilter" class="apt-filter" placeholder="아파트명 검색 예: 은마, 래미안, 자이" />
+          <button id="directSearchBtn" class="direct-btn">입력명으로 조회</button>
+        </div>
+
+        <div class="quick-help">
+          리스트는 대표 단지 위주입니다. 목록에 없어도 단지명을 직접 입력하면 해당 구의 실거래 데이터에서 검색합니다.
+        </div>
+
         <div id="aptList" class="apt-list vertical"></div>
       </div>
-
-      <p class="help">※ 구 클릭 시 아파트 리스트만 펼쳐지고, 실제 API 조회는 아파트를 클릭했을 때만 실행됩니다.</p>
     </section>
 
     <section id="summary" class="summary hidden"></section>

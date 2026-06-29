@@ -37,6 +37,7 @@ function formatEok(v){
   const manwon = moneyToNum(v); const eok = manwon / 10000;
   return eok >= 1 ? `${eok.toFixed(2).replace(/\.00$/,'')}억` : `${manwon.toLocaleString()}만원`;
 }
+function normalizeText(v){ return String(v || '').toLowerCase().replaceAll(' ', '').replace(/[()\[\]{}·\.\-_/]/g,''); }
 function normalizeItem(item){
   return {
     date: `${item.dealYear || item.년}-${String(item.dealMonth || item.월).padStart(2,'0')}-${String(item.dealDay || item.일).padStart(2,'0')}`,
@@ -81,20 +82,21 @@ function renderRegions(){
       selectedApt = "";
       $('aptFilter').value = "";
       $('selectedRegionText').textContent = `${selectedRegion} 선택됨`;
-      resetResult(`${selectedRegion} 아파트 리스트에서 단지를 선택해 주세요.`);
+      resetResult(`${selectedRegion} 아파트명을 검색하거나 리스트에서 단지를 선택해 주세요.`);
       renderRegions();
       renderAptList();
-      $('aptPanel').classList.remove('hidden');
     });
   });
 }
 function renderAptList(){
-  const keyword = $('aptFilter').value.trim().toLowerCase();
+  const keyword = $('aptFilter').value.trim();
   const source = APT_LIST[selectedRegion] || [];
-  const list = source.filter(name => name.toLowerCase().includes(keyword));
-  $('aptCountText').textContent = `${list.length.toLocaleString()}개 단지`;
+  const list = source.filter(name => normalizeText(name).includes(normalizeText(keyword)));
+  $('aptCountText').textContent = keyword ? `${list.length.toLocaleString()}개 검색됨` : `${source.length.toLocaleString()}개 단지`;
   if (!list.length) {
-    $('aptList').innerHTML = `<div class="empty">등록된 단지가 없습니다. apt-list.js에 단지를 추가해 주세요.</div>`;
+    $('aptList').innerHTML = `<div class="empty"><b>등록 리스트에 없습니다.</b><br>그래도 입력한 단지명으로 바로 조회할 수 있습니다.<br><button class="empty-search-btn" type="button">입력명 그대로 실거래 조회</button></div>`;
+    const emptyBtn = document.querySelector('.empty-search-btn');
+    if (emptyBtn) emptyBtn.addEventListener('click', () => searchSelectedApt());
     return;
   }
   $('aptList').innerHTML = list.map(name =>
@@ -103,42 +105,50 @@ function renderAptList(){
   document.querySelectorAll('.apt-row').forEach(btn => {
     btn.addEventListener('click', () => {
       selectedApt = btn.dataset.apt;
+      $('aptFilter').value = selectedApt;
       renderAptList();
-      searchSelectedApt();
+      searchSelectedApt(selectedApt);
     });
   });
 }
-async function searchSelectedApt(){
+async function fetchRegionMonths(lawCd, months){
+  const all = [];
+  for (const ym of months) {
+    // 현재 세영님 Worker는 lawdCd 파라미터를 요구합니다.
+    const url = `${API_BASE}/apt-trade?lawdCd=${lawCd}&dealYmd=${ym}`;
+    const res = await fetch(url);
+    if(!res.ok) throw new Error(await res.text());
+    const json = await res.json();
+    const items = Array.isArray(json.items) ? json.items : [];
+    all.push(...items.map(normalizeItem));
+  }
+  return all;
+}
+async function searchSelectedApt(aptName){
   const seq = ++requestSeq;
   const lawCd = LAWD_CODES[selectedRegion];
-  if (!lawCd || !selectedApt) return;
+  const query = (aptName || $('aptFilter').value || '').trim();
+  if (!lawCd || !query) return alert('아파트명을 입력하거나 선택해 주세요.');
   if (!$('startMonth').value || !$('endMonth').value) return alert('기간을 선택해 주세요.');
 
-  $('status').textContent = `${selectedRegion} ${selectedApt} 조회 중입니다...`;
+  selectedApt = query;
+  $('status').textContent = `${selectedRegion} ${query} 조회 중입니다...`;
   $('tbody').innerHTML = '';
   $('summary').classList.add('hidden');
   $('csvBtn').disabled = true;
 
   try{
     const months = ymList($('startMonth').value, $('endMonth').value);
-    const all = [];
-    for (const ym of months) {
-      const url = `${API_BASE}/apt-trade?lawdCd=${lawCd}&dealYmd=${ym}`;
-      const res = await fetch(url);
-      if(!res.ok) throw new Error(await res.text());
-      const json = await res.json();
-      const items = Array.isArray(json.items) ? json.items : [];
-      all.push(...items.map(normalizeItem));
-    }
+    const all = await fetchRegionMonths(lawCd, months);
     if (seq !== requestSeq) return;
-    const target = selectedApt.toLowerCase().replaceAll(' ', '');
-    const filtered = all.filter(r => (r.apt || '').toLowerCase().replaceAll(' ', '').includes(target));
-    $('resultTitle').textContent = `${selectedRegion} ${selectedApt}`;
+    const target = normalizeText(query);
+    const filtered = all.filter(r => normalizeText(r.apt).includes(target));
+    $('resultTitle').textContent = `${selectedRegion} ${query}`;
     $('status').textContent = filtered.length ? `${filtered.length.toLocaleString()}건 조회되었습니다.` : '선택한 기간에 거래가 없습니다.';
     render(filtered);
   } catch(e){
     console.error(e);
-    $('status').textContent = '조회 실패: Worker 주소/API 키/CORS 설정을 확인하세요.';
+    $('status').textContent = `조회 실패: ${e.message || 'Worker/API 설정을 확인하세요.'}`;
   }
 }
 function downloadCSV(){
@@ -146,13 +156,18 @@ function downloadCSV(){
   const lines = [head, ...lastRows.map(r=>[r.date, `${selectedRegion} ${r.dong}`, r.apt, r.area, r.floor, r.amount, r.buildYear])]
     .map(row => row.map(v => `"${String(v).replaceAll('"','""')}"`).join(','));
   const blob = new Blob(['\ufeff' + lines.join('\n')], {type:'text/csv;charset=utf-8'});
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${selectedRegion}_${selectedApt}_실거래가.csv`; a.click();
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${selectedRegion}_${selectedApt || '검색'}_실거래가.csv`;
+  a.click();
 }
 $('aptFilter').addEventListener('input', renderAptList);
-$('startMonth').addEventListener('change', () => { if(selectedApt) searchSelectedApt(); });
-$('endMonth').addEventListener('change', () => { if(selectedApt) searchSelectedApt(); });
+$('aptFilter').addEventListener('keydown', (e) => { if(e.key === 'Enter') searchSelectedApt(); });
+$('directSearchBtn').addEventListener('click', () => searchSelectedApt());
+$('startMonth').addEventListener('change', () => { if(selectedApt) searchSelectedApt(selectedApt); });
+$('endMonth').addEventListener('change', () => { if(selectedApt) searchSelectedApt(selectedApt); });
 $('csvBtn').addEventListener('click', downloadCSV);
 setDefaultMonths();
 renderRegions();
 renderAptList();
-resetResult(`${selectedRegion} 아파트 리스트에서 단지를 선택해 주세요.`);
+resetResult(`${selectedRegion} 아파트명을 검색하거나 리스트에서 단지를 선택해 주세요.`);

@@ -1,41 +1,28 @@
-:root{
-  --bg:#f6f8fb; --card:#fff; --text:#111827; --muted:#6b7280;
-  --line:#e5e7eb; --blue:#2563eb; --blue2:#1d4ed8; --dark:#111827;
-}
-*{box-sizing:border-box}
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans KR",sans-serif;background:linear-gradient(180deg,#eef4ff 0,#f6f8fb 260px);color:var(--text)}
-.wrap{max-width:1180px;margin:0 auto;padding:48px 18px 80px}
-.hero{text-align:center;margin-bottom:28px}
-.badge{display:inline-flex;padding:7px 12px;border:1px solid #c7d2fe;border-radius:999px;color:#1d4ed8;background:#eef2ff;font-weight:700;font-size:13px}
-.hero h1{font-size:44px;letter-spacing:-1.5px;margin:18px 0 8px}
-.hero p{margin:0;color:var(--muted)}
-.card{background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:24px;box-shadow:0 18px 45px rgba(15,23,42,.08);padding:24px}
-.search-card{margin-bottom:18px}
-.top-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:420px;margin-bottom:24px}
-label{font-size:13px;font-weight:800;color:#374151}
-input{width:100%;height:48px;margin-top:8px;border:1px solid #d1d5db;border-radius:14px;padding:0 14px;font-size:15px;background:#fff}
-input:focus{outline:3px solid #dbeafe;border-color:#60a5fa}
-button{height:46px;border:0;border-radius:15px;background:var(--blue);color:#fff;font-weight:900;font-size:15px;padding:0 18px;cursor:pointer}
-button:hover{background:var(--blue2)}
-button:disabled{opacity:.45;cursor:not-allowed}
-.ghost{background:#f3f4f6;color:#111827;margin-top:0}.ghost:hover{background:#e5e7eb}
-.help{font-size:13px;color:var(--muted);margin:18px 0 0}
-.section-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:8px 0 12px}
-.section-title h2{font-size:18px;margin:0}.section-title span{font-size:13px;color:var(--muted);font-weight:800}
-.region-buttons{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
-.region-chip{background:#f8fafc;color:#334155;border:1px solid #dbe3f0;border-radius:16px;height:44px;padding:0 12px}
-.region-chip:hover,.region-chip.active{background:var(--dark);color:#fff;border-color:var(--dark)}
-.apt-panel{margin-top:24px;border:1px solid #e5e7eb;background:#f8fafc;border-radius:22px;padding:18px;animation:drop .18s ease-out}
-@keyframes drop{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
-.apt-title{margin-top:0}.apt-filter{margin:0 0 14px;background:#fff}
-.apt-list.vertical{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;max-height:420px;overflow:auto;padding:2px 4px 2px 2px}
-.apt-row{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;height:auto;min-height:46px;background:#fff;color:#1f2937;border:1px solid #dbe3f0;border-radius:14px;padding:11px 14px;text-align:left}
-.apt-row .name{font-weight:900;line-height:1.25}.apt-row .go{font-size:12px;color:#64748b;font-weight:800;white-space:nowrap}
-.apt-row:hover,.apt-row.active{background:var(--blue);color:#fff;border-color:var(--blue)}
-.apt-row:hover .go,.apt-row.active .go{color:#dbeafe}
-.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}
-.summary .box{background:#111827;color:#fff;border-radius:20px;padding:18px}.summary .box span{display:block;color:#cbd5e1;font-size:12px}.summary .box b{font-size:23px}
-.hidden{display:none}.result-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.result-head h2{margin:0 0 12px;font-size:22px}.status{padding:14px 0;color:var(--muted)}
-.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:16px}table{width:100%;border-collapse:collapse;min-width:850px;background:#fff}th,td{padding:13px 14px;border-bottom:1px solid var(--line);font-size:14px;text-align:left;white-space:nowrap}th{background:#f9fafb;color:#374151;font-size:13px}td.amount{font-weight:900;color:#1d4ed8}
-@media(max-width:900px){.hero h1{font-size:34px}.top-row{grid-template-columns:1fr;max-width:none}.summary{grid-template-columns:1fr 1fr}.card{padding:18px}.section-title{align-items:flex-start;flex-direction:column}.region-buttons{grid-template-columns:repeat(3,1fr)}.apt-list.vertical{grid-template-columns:1fr;max-height:460px}}
+:root{--bg:#f6f8fb;--card:#fff;--text:#111827;--muted:#6b7280;--line:#e5e7eb;--blue:#2563eb;--blue2:#1d4ed8;--dark:#111827;--soft:#f8fafc}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans KR",sans-serif;background:linear-gradient(180deg,#eef4ff 0,#f6f8fb 260px);color:var(--text)}
+.wrap{max-width:1180px;margin:0 auto;padding:48px 18px 80px}.hero{text-align:center;margin-bottom:28px}.badge{display:inline-flex;padding:7px 12px;border:1px solid #c7d2fe;border-radius:999px;color:#1d4ed8;background:#eef2ff;font-weight:800;font-size:13px}.hero h1{font-size:44px;letter-spacing:-1.5px;margin:18px 0 8px}.hero p{margin:0;color:var(--muted)}
+.card{background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:24px;box-shadow:0 18px 45px rgba(15,23,42,.08);padding:24px}.search-card{margin-bottom:18px}.top-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:420px;margin-bottom:24px}label{font-size:13px;font-weight:800;color:#374151}input{width:100%;height:48px;border:1px solid #d1d5db;border-radius:14px;padding:0 14px;font-size:15px;background:#fff}label input{margin-top:8px}input:focus{outline:3px solid #dbeafe;border-color:#60a5fa}button{height:46px;border:0;border-radius:15px;background:var(--blue);color:#fff;font-weight:900;font-size:15px;padding:0 18px;cursor:pointer}button:hover{background:var(--blue2)}button:disabled{opacity:.45;cursor:not-allowed}.ghost{background:#f3f4f6;color:#111827;margin-top:0}.ghost:hover{background:#e5e7eb}
+.section-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:8px 0 12px}.section-title h2{font-size:18px;margin:0}.section-title span{font-size:13px;color:var(--muted);font-weight:800}.region-buttons{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.region-chip{background:#f8fafc;color:#334155;border:1px solid #dbe3f0;border-radius:16px;height:44px;padding:0 12px}.region-chip:hover,.region-chip.active{background:var(--dark);color:#fff;border-color:var(--dark)}
+.apt-panel{margin-top:24px;border:1px solid #e5e7eb;background:#f8fafc;border-radius:22px;padding:18px;animation:drop .18s ease-out}@keyframes drop{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}.apt-title{margin-top:0}.apt-search-bar{display:grid;grid-template-columns:1fr 150px;gap:10px}.apt-filter{background:#fff}.direct-btn{height:48px}.quick-help{font-size:13px;color:#64748b;margin:10px 0 14px}.quick-help b{color:#111827}.apt-list.vertical{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;max-height:460px;overflow:auto;padding:2px 4px 2px 2px}.apt-row{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;height:auto;min-height:46px;background:#fff;color:#1f2937;border:1px solid #dbe3f0;border-radius:14px;padding:11px 14px;text-align:left}.apt-row .name{font-weight:900;line-height:1.25}.apt-row .go{font-size:12px;color:#64748b;font-weight:800;white-space:nowrap}.apt-row:hover,.apt-row.active{background:var(--blue);color:#fff;border-color:var(--blue)}.apt-row:hover .go,.apt-row.active .go{color:#dbeafe}.empty{grid-column:1/-1;background:#fff;border:1px dashed #cbd5e1;border-radius:16px;padding:18px;color:#64748b;line-height:1.6}.empty b{color:#111827}
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}.summary .box{background:#111827;color:#fff;border-radius:20px;padding:18px}.summary .box span{display:block;color:#cbd5e1;font-size:12px}.summary .box b{font-size:23px}.hidden{display:none}.result-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.result-head h2{margin:0 0 12px;font-size:22px}.status{padding:14px 0;color:var(--muted)}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:16px}table{width:100%;border-collapse:collapse;min-width:850px;background:#fff}th,td{padding:13px 14px;border-bottom:1px solid var(--line);font-size:14px;text-align:left;white-space:nowrap}th{background:#f9fafb;color:#374151;font-size:13px}td.amount{font-weight:900;color:#1d4ed8}
+@media(max-width:900px){.hero h1{font-size:34px}.top-row{grid-template-columns:1fr;max-width:none}.summary{grid-template-columns:1fr 1fr}.card{padding:18px}.section-title{align-items:flex-start;flex-direction:column}.region-buttons{grid-template-columns:repeat(3,1fr)}.apt-list.vertical{grid-template-columns:1fr;max-height:460px}.apt-search-bar{grid-template-columns:1fr}.direct-btn{width:100%}}
 @media(max-width:520px){.region-buttons{grid-template-columns:repeat(2,1fr)}.summary{grid-template-columns:1fr}.wrap{padding-top:34px}.hero h1{font-size:30px}}
+
+
+.empty-search-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  height:42px;
+  margin-top:12px;
+  border-radius:12px;
+  background:#111827;
+  color:#fff;
+  font-size:14px;
+  font-weight:900;
+  padding:0 16px;
+}
+.empty-search-btn:hover{background:#374151}
+.quick-help{
+  line-height:1.55;
+}
