@@ -123,7 +123,7 @@ async function searchSelectedApt(){
     const months = ymList($('startMonth').value, $('endMonth').value);
     const all = [];
     for (const ym of months) {
-      const url = `${API_BASE}/apt-trade?lawCd=${lawCd}&dealYmd=${ym}`;
+      const url = `${API_BASE}/apt-trade?lawdCd=${lawCd}&dealYmd=${ym}`;
       const res = await fetch(url);
       if(!res.ok) throw new Error(await res.text());
       const json = await res.json();
